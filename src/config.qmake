@@ -1,0 +1,82 @@
+# -- utilisation QtWidgets --
+QT += widgets
+
+# -- options de generation des projets/makefile --
+CONFIG += debug_and_release
+
+# -- definition des repertoires supplementaires pour la recherche des headers et libs --
+INCLUDEPATH	+= "$$(SRC_DIR)"
+build_pass:CONFIG(debug, debug|release) {
+	LIBS 	*= -L"$$(BIN_DEBUG_DIR)"
+} else {
+	LIBS	*= -L"$$(BIN_RELEASE_DIR)"
+}
+
+# -- libs statiques par defaut --
+contains (TEMPLATE,lib) {
+	CONFIG	+= static
+}
+contains (TEMPLATE,vclib) {
+	CONFIG	+= static
+}
+
+# -- definition des include, sources, forms, etc --
+CURRENT_DIR = $${_PRO_FILE_PWD_}
+win32 {
+	CURRENT_DIR =		 $$replace(CURRENT_DIR,/,\\)
+}
+win32 {
+	FIND_CMD 			= "dir /B /S $${CURRENT_DIR}\\"
+} else {
+	FIND_CMD 			= "find $${CURRENT_DIR} -name "
+}
+exists( $${_PRO_FILE_PWD_}/*.h ) {
+	HEADERS				*= $$system($${FIND_CMD}*.h)
+}
+exists( $${_PRO_FILE_PWD_}/*.cpp ) {
+	SOURCES				*= $$system($${FIND_CMD}*.cpp)
+}
+exists( $${_PRO_FILE_PWD_}/*.c ) {
+	SOURCES				*= $$system($${FIND_CMD}*.c)
+}
+exists( $${_PRO_FILE_PWD_}/*.ui ) {
+	FORMS				= $$system($${FIND_CMD}*.ui)
+}
+exists( $${_PRO_FILE_PWD_}/*.qrc ) {
+	RESOURCES			= *.qrc
+}
+exists( $${_PRO_FILE_PWD_}/stdafx.h ) {
+	CONFIG				+= precompile_header
+	PRECOMPILED_HEADER  = stdafx.h
+}
+win32 {
+	exists( $${_PRO_FILE_PWD_}/*.rc ) {
+		RC_FILE 		= $$system(dir /B $${CURRENT_DIR}\\*.rc)
+	}
+}
+
+# -- definition des repertoires de generation --
+build_pass:CONFIG(debug, debug|release) {
+	DESTDIR 		= "$$(BIN_RELEASE_DIR)"
+	OBJECTS_DIR		= "$$(TMP_DIR)/debug/$$TARGET"
+	UI_DIR			= "$$(TMP_DIR)/debug/$$TARGET"
+	MOC_DIR			= "$$(TMP_DIR)/debug/$$TARGET"
+	RCC_DIR			= "$$(TMP_DIR)/debug/$$TARGET"
+	TARGET			= $$join(TARGET,,,_d)
+	CONFIG 			+= console
+} else {
+	DESTDIR 		= "$$(BIN_DEBUG_DIR)"
+	OBJECTS_DIR		= "$$(TMP_DIR)/release/$$TARGET"
+	UI_DIR			= "$$(TMP_DIR)/release/$$TARGET"
+	MOC_DIR			= "$$(TMP_DIR)/release/$$TARGET"
+	RCC_DIR			= "$$(TMP_DIR)/release/$$TARGET"
+}
+
+# -- spec des libs avec lesquelles on linke --
+for(lib,LINK_WITH_LIBS) {
+	build_pass:CONFIG(debug, debug|release) {
+		LIBS		+= -l$${lib}_d
+	} else {
+		LIBS		+= -l$${lib}
+	}
+}

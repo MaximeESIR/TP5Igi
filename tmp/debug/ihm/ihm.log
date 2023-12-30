@@ -1,0 +1,5 @@
+﻿  VariableModel.cpp
+H:\windows\Documents\IGI\Sujets\TP05\src\ihm\VariableModel.cpp(2,48): warning C4100: 'parent' : paramètre formel non référencé
+H:\windows\Documents\IGI\Sujets\TP05\src\ihm\VariableModel.cpp(6,51): warning C4100: 'parent' : paramètre formel non référencé
+H:\windows\Documents\IGI\Sujets\TP05\src\ihm\VariableModel.cpp(23): warning C4715: 'VariableModel::data' : les chemins de contrôle ne retournent pas tous une valeur
+  ihm.vcxproj -> H:\windows\Documents\IGI\Sujets\TP05\bin\ihm_d.exe
